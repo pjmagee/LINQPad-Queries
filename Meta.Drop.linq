@@ -2,6 +2,7 @@
 
 /// <summary> 
 /// Drops all M# Meta Databases except for the latest M# meta database that was created from the M# meta files.
+/// -*- mode: c#;-*-
 /// </summary>
 
 (from db in Sysdatabases.AsEnumerable()
