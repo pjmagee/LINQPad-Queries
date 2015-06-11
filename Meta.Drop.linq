@@ -1,3 +1,9 @@
+<Query Kind="Expression" />
+
+/// <summary> 
+/// Drops all M# Meta Databases except for the latest M# meta database that was created from the M# meta files.
+/// </summary>
+
 (from db in Sysdatabases.AsEnumerable()
 let match = Regex.Match(db.Name, @"^@Meta_(.*)\s\((.+)\)$")
 where match.Success
