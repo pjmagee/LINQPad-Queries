@@ -48,8 +48,13 @@ void Main()
 	
 	var fieldDeclarationSyntaxes = tree.GetRoot().DescendantNodes().OfType<FieldDeclarationSyntax>();
 	
+	
 	foreach(var fieldDeclarationSyntax in fieldDeclarationSyntaxes)
 	{
+		var typeInfo = semanticModel.GetTypeInfo(fieldDeclarationSyntax.Declaration.Type);
+		
+		if(!typeInfo.Type.Interfaces.Any(i => i.Name == "IDisposable")) continue;
+	
 		var classDeclarationSyntax = fieldDeclarationSyntax.FirstAncestorOrSelf<ClassDeclarationSyntax>();
 		
 		if(classDeclarationSyntax.BaseList == null || classDeclarationSyntax.BaseList.Types.Any(n => n.ToString() != "IDisposable"))
