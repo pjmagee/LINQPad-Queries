@@ -22,7 +22,16 @@
 
 void Main()
 {
-	IPEndPoint groupEp = new IPEndPoint(IPAddress.Loopback, 1000);
+	var addresses = new[]
+	{
+		new IPEndPoint(IPAddress.Parse("172.16.0.124"), 1000), // ABU
+		new IPEndPoint(IPAddress.Parse("172.16.0.131"), 1000), // PATRICK
+		new IPEndPoint(IPAddress.Parse("172.16.0.187"), 1000), // JAMES
+		new IPEndPoint(IPAddress.Parse("172.16.1.55"), 1000) // MEOW
+	};
+
+	var server = new IPEndPoint(IPAddress.Parse("172.16.0.131"), 1000); // PATRICK
+	bool isServer = Dns.GetHostName() == "PATRICK";
 
 	var list = new ListBox();
 	var textBox = new TextBox { };
@@ -36,13 +45,33 @@ void Main()
 	{
 		Dispatcher.CurrentDispatcher.InvokeAsync(async () =>
 		{
-			using (var udpClient = new UdpClient(groupEp))
+			// If this is the server, listen to all addresses, otherwise, listen for packets from server
+			using (var udpClient = new UdpClient(isServer ? server : new IPEndPoint(IPAddress.Any, 1000)))
 			{
 				while (window.IsActive)
 				{
 					var result = await udpClient.ReceiveAsync();
 					var message = Encoding.ASCII.GetString(result.Buffer);
 					list.Items.Add(new ListBoxItem() { Content = message });
+					textBox.Text = string.Empty;
+						
+					// If this is the server, relay the message to everyone
+					if (isServer)
+					{
+						using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
+						{
+							// Send recieved message to all addresses
+							foreach (var address in addresses.Except(new[] { server }))
+							{
+								var data = Encoding.ASCII.GetBytes(message);
+								SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+								args.SetBuffer(data, 0, data.Length);
+								args.UserToken = socket;
+								args.RemoteEndPoint = address;
+								socket.SendToAsync(args);
+							}
+						}
+					}
 				}
 			}
 		});
@@ -52,15 +81,32 @@ void Main()
 	{
 		if (e.Key == System.Windows.Input.Key.Enter)
 		{
+			var text = textBox.Text;
+			textBox.Text = string.Empty;
+
 			using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
 			{
-				var data = Encoding.ASCII.GetBytes($"{System.Environment.MachineName}: {textBox.Text}");
-				SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-				args.SetBuffer(data, 0, data.Length);
-				args.UserToken = socket;
-				args.RemoteEndPoint = groupEp;
-				socket.SendToAsync(args);
-				textBox.Text = string.Empty;
+				if (isServer) // relay message to all listening on my address
+				{
+					foreach (var address in addresses)
+					{
+						var data = Encoding.ASCII.GetBytes($"{System.Environment.MachineName}: {text}");
+						SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+						args.SetBuffer(data, 0, data.Length);
+						args.UserToken = socket;
+						args.RemoteEndPoint = address;
+						socket.SendToAsync(args);
+					}
+				}
+				else // send to server address only (it will relay the message)
+				{
+					var data = Encoding.ASCII.GetBytes($"{System.Environment.MachineName}: {text}");
+					SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+					args.SetBuffer(data, 0, data.Length);
+					args.UserToken = socket;
+					args.RemoteEndPoint = server;
+					socket.SendToAsync(args);
+				}
 			}
 		}
 	};

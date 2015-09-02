@@ -30,7 +30,11 @@ void Main()
 		var parseToken = memberAccessExpressionSyntax.DescendantTokens()
 													 .Where(t => t.IsKind(SyntaxKind.IdentifierToken))
 													 .FirstOrDefault(t => t.ValueText == "TryParse" || t.ValueText == "Parse");
-
+													 
+		var typeInfo = semanticModel.GetTypeInfo(memberAccessExpressionSyntax.Expression);
+		
+		if(typeInfo.Type.ContainingNamespace.Name != "System") continue;
+		
 		if (parseToken == null) continue;
 
 		var identifierNameSyntax = (IdentifierNameSyntax)parseToken.Parent;
