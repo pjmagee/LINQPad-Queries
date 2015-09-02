@@ -2,72 +2,34 @@
   <NuGetReference>MSharp.Framework</NuGetReference>
   <NuGetReference>Microsoft.CodeAnalysis</NuGetReference>
   <NuGetReference>Microsoft.CodeAnalysis.CSharp</NuGetReference>
+  <NuGetReference>Microsoft.CodeAnalysis.CSharp.Extensions</NuGetReference>
   <Namespace>Microsoft.CodeAnalysis</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Classification</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.CodeActions</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.CodeFixes</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.CodeRefactorings</Namespace>
   <Namespace>Microsoft.CodeAnalysis.CSharp</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.CSharp.Formatting</Namespace>
+  <Namespace>Microsoft.CodeAnalysis.CSharp.Extensions</Namespace>
   <Namespace>Microsoft.CodeAnalysis.CSharp.Syntax</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Diagnostics</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Differencing</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Editing</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Emit</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.FindSymbols</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Formatting</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Host</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Host.Mef</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.MSBuild</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Options</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Recommendations</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Rename</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Simplification</Namespace>
-  <Namespace>Microsoft.CodeAnalysis.Text</Namespace>
-  <Namespace>Microsoft.CSharp</Namespace>
-  <Namespace>System</Namespace>
-  <Namespace>System.CodeDom</Namespace>
-  <Namespace>System.Collections.Immutable</Namespace>
-  <Namespace>System.Composition</Namespace>
-  <Namespace>System.Composition.Convention</Namespace>
-  <Namespace>System.Composition.Hosting</Namespace>
-  <Namespace>System.Composition.Hosting.Core</Namespace>
-  <Namespace>System.Linq</Namespace>
-  <Namespace>System.Reflection</Namespace>
-  <Namespace>System.Reflection.Metadata</Namespace>
-  <Namespace>System.Reflection.Metadata.Ecma335</Namespace>
-  <Namespace>System.Reflection.PortableExecutable</Namespace>
+  <IncludePredicateBuilder>true</IncludePredicateBuilder>
 </Query>
 
 void Main()
 {
 	var msCoreLib = PortableExecutableReference.CreateFromFile(typeof(object).Assembly.Location);
 	var tree = CSharpSyntaxTree.ParseText(GetCode());
-	var compilation = CSharpCompilation.Create("BasicDisposeRule", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });		
-	var semanticModel = compilation.GetSemanticModel(tree, true);					
-	
-	var castExpression = tree.GetRoot().DescendantNodes().OfType<CastExpressionSyntax>();
-	
-	// TODO:
+	var compilation = CSharpCompilation.Create("BasicDisposeRule", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
+	var semanticModel = compilation.GetSemanticModel(tree, true);	
+	var castExpressions = tree.GetRoot().DescendantNodes().OfType<CastExpressionSyntax>();
+		
+	foreach(var castExpression in castExpressions)
+	{		
+		castExpression.IsUnnecessaryCast(semanticModel, new CancellationToken(false)).Dump();
+		
+//		if(typeInfo.Type.Name == typeInfo.ConvertedType.Name)
+//		{
+//			"Cast is redundant, Line: {0}, Col: {1}".FormatWith(castExpression.GetLocation().GetLineSpan().StartLinePosition.Line + 1, castExpression.GetLocation().GetLineSpan().StartLinePosition.Character + 1).Dump();
+//		}
+	}
 }
 
 public string GetCode()
 {
-	return @"namespace Test
-			{
-				using System;
-				using System.IO;				
-			
-				public class ShouldImplementIDisposable
-				{
-					private TextReader textReader;
-					
-					private TextReader one, two, three;
-			
-					public ShouldImplementIDisposable(TextReader textReader)
-					{
-						this.textReader = (TextReader) textReader; // reundant cast
-					}
-				}
-			}";
+	return File.ReadAllText(@"C:\Projects\GCop\GCop.Test.Code\CastingExpressionAnalyzerTests\ShouldRemoveRedundantCasts.cs");
 }
