@@ -19,24 +19,32 @@ void Main()
 	var msCoreLib = PortableExecutableReference.CreateFromFile(typeof(object).Assembly.Location);
 	var tree = CSharpSyntaxTree.ParseText(GetCode());
 	var root = tree.GetRoot();
-	var compilation = CSharpCompilation.Create("BasicDisposeRule", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
+	var compilation = CSharpCompilation.Create("FileInfoAnalyzer", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
 	var semanticModel = compilation.GetSemanticModel(tree, true);
+	var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
 
-	var method = root.DescendantNodes().OfType<MethodDeclarationSyntax>().Last();
-	
-	
-//	
-//	var trivia = method.DescendantTrivia().Where(t => t.IsKind(SyntaxKind.EndRegionDirectiveTrivia));
-//
-//	foreach (var t in trivia)
-//	{
-//		method = method.ReplaceTrivia(t, trivia.ToSyntaxTriviaList().Except(st => st.IsKind(SyntaxKind.EndRegionDirectiveTrivia)));
-//	}
-	
-	method.ToFullString().Dump();
-	
-	//method.ToString().Dump();
 
+	if (new int[] { }.Count() > 1)
+	{
+		
+	}
+	
+	
+	var expressions = root.DescendantNodes().OfType<MemberAccessExpressionSyntax>();
+
+	foreach (var expression in expressions)
+	{
+		if (expression.ToString() == "DateTime.Now")
+		{
+			"Use LocalTime.{0} instead of  ".Dump();
+		}
+
+		if (expression.ToString() == "DateTime.Today")
+		{
+			"Use LocalTime.Today".Dump();
+		}
+	}
+	
 }
 
-public string GetCode() => File.ReadAllText(@"C:\Projects\GCop\GCop.Test.Code\ToParseAnalyzer\ShouldUseToParseInsteadOfParse.cs");
+public string GetCode() => File.ReadAllText(@"C:\Projects\GCop\GCop.Test.Code\LocalTimeAnalyzer\ShouldUseLocalTimeNotDateTime.cs");
