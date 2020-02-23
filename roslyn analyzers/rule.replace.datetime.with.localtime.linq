@@ -19,16 +19,10 @@ void Main()
 	var msCoreLib = PortableExecutableReference.CreateFromFile(typeof(object).Assembly.Location);
 	var tree = CSharpSyntaxTree.ParseText(GetCode());
 	var root = tree.GetRoot();
-	var compilation = CSharpCompilation.Create("FileInfoAnalyzer", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
+	var compilation = CSharpCompilation.Create("LocalTime.XXX", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
 	var semanticModel = compilation.GetSemanticModel(tree, true);
 	var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
 
-
-	if (new int[] { }.Count() > 1)
-	{
-		
-	}
-	
 	
 	var expressions = root.DescendantNodes().OfType<MemberAccessExpressionSyntax>();
 
@@ -47,4 +41,4 @@ void Main()
 	
 }
 
-public string GetCode() => File.ReadAllText(@"C:\Projects\GCop\GCop.Test.Code\LocalTimeAnalyzer\ShouldUseLocalTimeNotDateTime.cs");
+public string GetCode() => File.ReadAllText(@"ShouldUseLocalTimeNotDateTime.cs");

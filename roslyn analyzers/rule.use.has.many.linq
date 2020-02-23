@@ -65,4 +65,4 @@ void Main()
 	}
 }
 
-public string GetCode() => File.ReadAllText(@"C:\Projects\GCop\GCop.Test.Code\HasManyAnalyzer\ShouldUseHasManyNotCountGreaterThanOne.cs");
+public string GetCode() => File.ReadAllText(@"ShouldUseHasManyNotCountGreaterThanOne.cs");

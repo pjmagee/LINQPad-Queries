@@ -14,7 +14,7 @@ void Main()
 {
 	var msCoreLib = PortableExecutableReference.CreateFromFile(typeof(object).Assembly.Location);
 	var tree = CSharpSyntaxTree.ParseText(GetCode());
-	var compilation = CSharpCompilation.Create("BasicDisposeRule", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
+	var compilation = CSharpCompilation.Create("ShouldRemoveRedundantCasts", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
 	var semanticModel = compilation.GetSemanticModel(tree, true);	
 	var castExpressions = tree.GetRoot().DescendantNodes().OfType<CastExpressionSyntax>();
 		
@@ -31,5 +31,5 @@ void Main()
 
 public string GetCode()
 {
-	return File.ReadAllText(@"C:\Projects\GCop\GCop.Test.Code\CastingExpressionAnalyzerTests\ShouldRemoveRedundantCasts.cs");
+	return File.ReadAllText(@"ShouldRemoveRedundantCasts.cs");
 }

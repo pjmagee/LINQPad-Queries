@@ -19,7 +19,7 @@ void Main()
 	var msCoreLib = PortableExecutableReference.CreateFromFile(typeof(object).Assembly.Location);
 	var tree = CSharpSyntaxTree.ParseText(GetCode());
 	var root = tree.GetRoot();
-	var compilation = CSharpCompilation.Create("BasicDisposeRule", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
+	var compilation = CSharpCompilation.Create("UseToRule", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
 	var semanticModel = compilation.GetSemanticModel(tree, true);
 	var invocations = root.DescendantNodes().OfType<InvocationExpressionSyntax>();
 
@@ -63,4 +63,4 @@ void Main()
 	}
 }
 
-public string GetCode() => File.ReadAllText(@"C:\Projects\GCop\GCop.Test.Code\ToParseAnalyzer\ShouldUseToInsteadOfParse.cs");
+public string GetCode() => File.ReadAllText(@"UseToRule.cs");

@@ -18,7 +18,7 @@ void Main()
 {
 	var msCoreLib = PortableExecutableReference.CreateFromFile(typeof(object).Assembly.Location);
 	var tree = CSharpSyntaxTree.ParseText(GetCode());
-	var compilation = CSharpCompilation.Create("BasicDisposeRule", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
+	var compilation = CSharpCompilation.Create("ShouldUseMSharpJoinExtension", syntaxTrees: new[] { tree }, references: new[] { msCoreLib });
 	var semanticModel = compilation.GetSemanticModel(tree, true);
 
 	var invocations = tree.GetRoot().DescendantNodes().OfType<InvocationExpressionSyntax>();
@@ -65,4 +65,4 @@ void Main()
 	stringKeywords.Select(x => x.GetLocation().GetLineSpan().ToString()).Dump();
 }
 
-public string GetCode() => File.ReadAllText(@"C:\Projects\GCop\GCop.Test.Code\UseToStringJoinAnalyzer\ShouldUseMSharpJoinExtension.cs");
+public string GetCode() => File.ReadAllText(@"ShouldUseMSharpJoinExtension.cs");
