@@ -25,18 +25,16 @@
   <Namespace>Microsoft.CodeAnalysis.Simplification</Namespace>
   <Namespace>Microsoft.CodeAnalysis.Text</Namespace>
   <Namespace>Microsoft.CSharp</Namespace>
-  <Namespace>System</Namespace>
   <Namespace>System.CodeDom</Namespace>
   <Namespace>System.Collections.Immutable</Namespace>
   <Namespace>System.Composition</Namespace>
   <Namespace>System.Composition.Convention</Namespace>
   <Namespace>System.Composition.Hosting</Namespace>
   <Namespace>System.Composition.Hosting.Core</Namespace>
-  <Namespace>System.Linq</Namespace>
-  <Namespace>System.Reflection</Namespace>
   <Namespace>System.Reflection.Metadata</Namespace>
   <Namespace>System.Reflection.Metadata.Ecma335</Namespace>
   <Namespace>System.Reflection.PortableExecutable</Namespace>
+  <Namespace>Humanizer</Namespace>
 </Query>
 
 void Main()

@@ -1,4 +1,4 @@
-<Query Kind="Expression" />
+<Query Kind="Statements" />
 
 public interface IFileExtractPlugin
 {
@@ -11,7 +11,7 @@ public class CSharpProjectFilePlugin : IFileExtractPlugin
 {
 	public bool Supports(string path) => path.EndsWith(".csproj");
 	
-	public PluginMetadata MetaData => new PluginMetadata { Name = "MSBuild C# Project Files", Author = "Patrick Magee", Version "1.0", Id = Guid.Parse("") };
+	public PluginMetadata Metadata => new PluginMetadata { Name = "MSBuild C# Project Files", Author = "Patrick Magee", Version=  "1.0", Id = Guid.Parse("") };
 	
 	public IEnumerable<Extract> GetExtracts(string contents)
 	{
@@ -25,7 +25,7 @@ public class NodePackagesFilePlugin : IFileExtractPlugin
 {
 	public bool Supports(string path) => path.EndsWith("packages.json");
 
-	public PluginMetadata MetaData => new PluginMetadata { Name = "Node Package Manager Support", Author = "Patrick Magee", Version "1.0", Id = Guid.Parse("") };
+	public PluginMetadata Metadata => new PluginMetadata { Name = "Node Package Manager Support", Author = "Patrick Magee", Version = "1.0", Id = Guid.Parse("") };
 
 	public IEnumerable<Extract> GetExtracts(string contents)
 	{
@@ -43,11 +43,11 @@ public interface IRegistryPlugin
 
 public class DockerRegistryPlugin : IRegistryPlugin
 {
-	public PluginMetadata MetaData => new PluginMetadata { Name = "Docker Registry V2", Author = "Patrick Magee", Version "1.0", Id = Guid.Parse("") };
+	public PluginMetadata Metadata => new PluginMetadata { Name = "Docker Registry V2", Author = "Patrick Magee", Version = "1.0", Id = Guid.Parse("") };
 	
 	public Metadata GetLatestMetadata(Registry registry, string id)
 	{
-		return new Metadata { Author = "", Description = "", IsLatest = true, Name = "", ProjectUrl = "", Published = "", Version = "" };
+		return new Metadata { Author = "", Description = "", IsLatest = true, Name = "", ProjectUrl = "", Published = DateTime.Now, Version = "" };
 	}
 }
 
@@ -59,8 +59,8 @@ public class Engine
 	
 	void Compute()
 	{
-		Registry registry = new Registry { ApiKey = "API-KEY", Endpoint = "http://nexus3.xpa.rbxd.ds:8080", Username = "", Password = "", PluginId = Guid.Parse("") };
-		VersionControl versionControl = new VersionControl  { Endpoint = "http://bitbucket.b2b.regn.net", ApiKey = "API-KEY", Plugin = "" };
+		Registry registry = new Registry { ApiKey = "API-KEY", Endpoint = "http://DOMAIN:8080", Username = "", Password = "" };
+		VersionControl versionControl = new VersionControl  { Endpoint = "http://DOMAIN", ApiKey = "API-KEY",  };
 	}
 }
 

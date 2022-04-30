@@ -22,16 +22,16 @@
 
 void Main()
 {
-	var addresses = new[]
+	var chatters = new[]
 	{
-		new IPEndPoint(IPAddress.Parse("172.16.0.124"), 1000), // ABU
-		new IPEndPoint(IPAddress.Parse("172.16.0.131"), 1000), // PATRICK
-		new IPEndPoint(IPAddress.Parse("172.16.0.187"), 1000), // JAMES
-		new IPEndPoint(IPAddress.Parse("172.16.1.55"), 1000) // MEOW
+		new IPEndPoint(IPAddress.Parse("172.16.0.124"), 1000), 
+		new IPEndPoint(IPAddress.Parse("172.16.0.131"), 1000),
+		new IPEndPoint(IPAddress.Parse("172.16.0.187"), 1000),
+		new IPEndPoint(IPAddress.Parse("172.16.1.55"), 1000)
 	};
 
-	var server = new IPEndPoint(IPAddress.Parse("172.16.0.131"), 1000); // PATRICK
-	bool isServer = Dns.GetHostName() == "PATRICK";
+	var server = new IPEndPoint(IPAddress.Parse("172.16.0.131"), 1000);
+	bool isServer = Dns.GetHostName() == "HOST_NAME";
 
 	var list = new ListBox();
 	var textBox = new TextBox { };
@@ -61,7 +61,7 @@ void Main()
 						using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
 						{
 							// Send recieved message to all addresses
-							foreach (var address in addresses.Except(new[] { server }))
+							foreach (var address in chatters.Except(new[] { server }))
 							{
 								var data = Encoding.ASCII.GetBytes(message);
 								SocketAsyncEventArgs args = new SocketAsyncEventArgs();
@@ -88,7 +88,7 @@ void Main()
 			{
 				if (isServer) // relay message to all listening on my address
 				{
-					foreach (var address in addresses)
+					foreach (var address in chatters)
 					{
 						var data = Encoding.ASCII.GetBytes($"{System.Environment.MachineName}: {text}");
 						SocketAsyncEventArgs args = new SocketAsyncEventArgs();
@@ -114,40 +114,3 @@ void Main()
 	window.ShowDialog();
 	Dispatcher.CurrentDispatcher.InvokeShutdown();
 }
-
-//private async Task SendAsync()
-//{
-//	using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp))
-//	{
-//		var textBox = new TextBox { Width = 150, Height = 20 };
-//
-//		textBox.KeyUp += (sender, e) =>
-//		{
-//			if (e.Key == System.Windows.Input.Key.Enter)
-//			{
-//				var data = Encoding.ASCII.GetBytes($"{System.Environment.MachineName}: {textBox.Text}");
-//				SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-//				args.SetBuffer(data, 0, data.Length);
-//				args.UserToken = socket;
-//				args.RemoteEndPoint = groupEp;
-//				socket.SendToAsync(args);
-//				textBox.Text = string.Empty;
-//			}
-//		};
-//
-//		textBox.Dump();
-//	}
-//}
-
-//private async Task ListenAsync()
-//{
-//	using (var udpClient = new UdpClient(groupEp))
-//	{
-//		var result = await udpClient.ReceiveAsync();
-//		var message = Encoding.ASCII.GetString(result.Buffer);
-//
-//		Console.WriteLine($"{message}");
-//	}
-//}
-
-// Define other methods and classes here

@@ -1,15 +1,4 @@
 <Query Kind="Program">
-  <Connection>
-    <ID>4fa71e94-9eb6-4451-91c5-e0c9bb666ff0</ID>
-    <Persist>true</Persist>
-    <Server>localhost</Server>
-    <EncryptTraffic>true</EncryptTraffic>
-    <Database>Vision</Database>
-    <ShowServer>true</ShowServer>
-    <DriverData>
-      <SkipCertificateCheck>true</SkipCertificateCheck>
-    </DriverData>
-  </Connection>
   <NuGetReference>DocumentFormat.OpenXml</NuGetReference>
   <Namespace>DocumentFormat.OpenXml</Namespace>
   <Namespace>DocumentFormat.OpenXml.Packaging</Namespace>
@@ -17,8 +6,12 @@
 </Query>
 
 void Main()
-{
-	using (SpreadsheetDocument document = SpreadsheetDocument.Create("C:\\temp\\dependencies.xlsx", SpreadsheetDocumentType.Workbook))
+{	
+	var file = Path.GetTempFileName();
+	var xlxs = file + ".xlsx";
+	File.Move(file, xlxs);	
+	
+	using (SpreadsheetDocument document = SpreadsheetDocument.Create(xlxs, SpreadsheetDocumentType.Workbook))
 	{
 		WorkbookPart workbookPart = document.AddWorkbookPart();
 		workbookPart.Workbook = new Workbook();
@@ -34,7 +27,7 @@ void Main()
 
 		workbookPart.Workbook.Save();
 
-		var dependencies = Dependencies.ToList();
+		var dependencies = Entity.GetData();
 
 		SheetData sheetData = worksheetPart.Worksheet.AppendChild(new SheetData());
 
@@ -58,8 +51,8 @@ void Main()
 			row.Append(
 				ConstructCell(dependency.Id.ToString(), CellValues.String),
 				ConstructCell(dependency.Name, CellValues.String),
-				ConstructCell(dependency.DependencyVersions.Count.ToString(), CellValues.Number),
-				ConstructCell(dependency.DependencyAssetDependencies.Count.ToString(), CellValues.Number)
+				ConstructCell(dependency.Versions.Count.ToString(), CellValues.Number),
+				ConstructCell(dependency.Assets.Count.ToString(), CellValues.Number)
 				);
 
 			sheetData.AppendChild(row);
@@ -67,6 +60,8 @@ void Main()
 
 		worksheetPart.Worksheet.Save();
 	}
+
+	Util.Cmd(@$"explorer {xlxs}");
 }
 
 private Cell ConstructCell(string value, CellValues dataType)
@@ -76,4 +71,20 @@ private Cell ConstructCell(string value, CellValues dataType)
 		CellValue = new CellValue(value),
 		DataType = new EnumValue<CellValues>(dataType)
 	};
+}
+
+public class Entity 
+{
+	public string Id { get; set; }
+	public string Name { get; set; }
+	public List<string> Versions { get; set; }
+	public List<string> Assets { get; set; }
+	
+	
+	public static IEnumerable<Entity> GetData()
+	{
+		yield return new Entity { Id = "1", Name = "Name 1", Versions = new[] {"1.0.0", "1.0.1", "1.0.2" }.ToList(), Assets = new[] { "Asset 1", "Asset 2", "Asset 3"}.ToList()  };
+		yield return new Entity { Id = "2", Name = "Name 2", Versions = new[] {"1.0.2", "1.2.1", "2.0.2" }.ToList(), Assets = new[] { "Asset 2", "Asset 1", "Asset 4"}.ToList()  };
+		
+	}
 }

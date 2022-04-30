@@ -56,20 +56,20 @@ public static void Main()
 		while (GetActiveWindowTitle().Equals("Star Wars™: The Old Republic™"))
 		{
 			mouse_event((int)MouseEventFlags.MOVE | (int)MouseEventFlags.ABSOLUTE, 31505, 31190, 0, 0);
-            Thread.Sleep(500);	
-			
-            mouse_event((int)MouseEventFlags.RIGHTDOWN, X_A , Y , 0, 0);
-            Thread.Sleep(TimeSpan.FromSeconds(0.3));
-            mouse_event((int)MouseEventFlags.RIGHTUP,  X_A, Y , 0, 0);
-			
+			Thread.Sleep(500);
+
+			mouse_event((int)MouseEventFlags.RIGHTDOWN, X_A, Y, 0, 0);
+			Thread.Sleep(TimeSpan.FromSeconds(0.3));
+			mouse_event((int)MouseEventFlags.RIGHTUP, X_A, Y, 0, 0);
+
 			Thread.Sleep(1700);
 			mouse_event((int)MouseEventFlags.MOVE | (int)MouseEventFlags.ABSOLUTE, 33923, 31190, 0, 0);
 			Thread.Sleep(50);
-			
-			mouse_event((int)MouseEventFlags.RIGHTDOWN, X_B, Y , 0, 0);
+
+			mouse_event((int)MouseEventFlags.RIGHTDOWN, X_B, Y, 0, 0);
 			Thread.Sleep(TimeSpan.FromSeconds(0.3));
-			mouse_event((int)MouseEventFlags.RIGHTUP, X_B, Y , 0, 0);
-			
+			mouse_event((int)MouseEventFlags.RIGHTUP, X_B, Y, 0, 0);
+
 			Thread.Sleep(3400);
 		}
 

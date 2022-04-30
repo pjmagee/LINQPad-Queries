@@ -23,15 +23,11 @@ async Task Main()
 	using(var client = new WebClient())
 	{
 		var json = await client.DownloadStringTaskAsync(new Uri("https://raw.githubusercontent.com/HeroesToolChest/heroes-data/master/heroesdata/2.49.2.77981/gamestrings/gamestrings_77981_enus.json"));
-		
-		await File.WriteAllTextAsync(@"C:\temp\heroes.json", json);
-
-		IConfiguration configuration = new ConfigurationBuilder().AddJsonFile(@"C:\temp\heroes.json").Build();
-
+		var file = Path.GetTempFileName();
+		await File.WriteAllTextAsync(file , json);
+		IConfiguration configuration = new ConfigurationBuilder().AddJsonFile(file).Build();
 		configuration.GetSection("gamestrings:unit:name").Dump();
 	}
-	
-	
 }
 
 // Define other methods, classes and namespaces here

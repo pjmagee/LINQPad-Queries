@@ -1,12 +1,8 @@
-<Query Kind="Program">
-  <NuGetReference>NBuilder</NuGetReference>
-  <Namespace>FizzWare.NBuilder</Namespace>
-  <Namespace>FizzWare.NBuilder.Generators</Namespace>
-</Query>
+<Query Kind="Program" />
 
 void Main()
 {	
-	$"{Feelings[GetRandom.Int(0, Feelings.Length)]}-{Names[GetRandom.Int(0, Names.Length)]}".Dump();	
+	$"{Feelings[Random.Shared.Next(0, Feelings.Length)]}-{Names[Random.Shared.Next(0, Names.Length)]}".Dump();	
 }
 
 private static readonly string[] Feelings =
